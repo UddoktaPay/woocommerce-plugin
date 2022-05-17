@@ -3,9 +3,9 @@
 Plugin Name:  UddoktaPay Gateway
 Plugin URI:   https://uddoktapay.com
 Description:  A payment gateway that allows your customers to pay with Bkash, Rocket, Nagad, Upay via UddoktaPay Gateway
-Version:      1.0.8
+Version:      1.1.3
 Author:       Md Rasel Islam
-Author URI:   https://facebook.com/rtraselbd
+Author URI:   https://rtrasel.com
 License:      GPL 2 or later
 License URI:  https://www.gnu.org/licenses/gpl-2.0.html
 Text Domain:  uddoktapay-gateway
@@ -42,6 +42,26 @@ function uddoktapay_init_gateway()
 		return;
 	}
 
+
+	// Require Woocommerce Class
+	if (file_exists(dirname(__FILE__) . '/class-wc-gateway-uddoktapay-gateway.php')) {
+		require_once dirname(__FILE__) . '/class-wc-gateway-uddoktapay-gateway.php';
+	}
+
+	// Load WooCommerce Class
+	add_filter('woocommerce_payment_gateways', 'uddoktapay_wc_class');
+	// Add fee
+	add_action('woocommerce_cart_calculate_fees', 'uddoktapay_add_checkout_fee_for_gateway');
+	// Refresh form
+	add_action('woocommerce_after_checkout_form', 'uddoktapay_refresh_checkout_on_payment_methods_change');
+
+	if (is_admin()) {
+
+		// Plugin Action Links.
+		add_filter('plugin_action_links_' . plugin_basename(__FILE__), 'uddoktapay_plugin_action_links');
+	}
+
+
 	// WooCommerce
 	function uddoktapay_wc_class($methods)
 	{
@@ -50,21 +70,6 @@ function uddoktapay_init_gateway()
 		}
 		return $methods;
 	}
-
-	// Load WooCommerce Class
-	add_filter('woocommerce_payment_gateways', 'uddoktapay_wc_class');
-
-	if (is_admin()) {
-
-		// Plugin Action Links.
-		add_filter('plugin_action_links_' . plugin_basename(__FILE__), 'uddoktapay_plugin_action_links');
-	}
-
-	// Require Woocommerce Class
-	if (file_exists(dirname(__FILE__) . '/class-wc-gateway-uddoktapay-gateway.php')) {
-		require_once dirname(__FILE__) . '/class-wc-gateway-uddoktapay-gateway.php';
-	}
-
 
 	/**
 	 * Plugin Action Links
@@ -87,5 +92,26 @@ function uddoktapay_init_gateway()
 		);
 
 		return $links;
+	}
+
+
+	function uddoktapay_add_checkout_fee_for_gateway()
+	{
+		$chosen_gateway = WC()->session->get('chosen_payment_method');
+		if ($chosen_gateway == 'uddoktapay') {
+			$uddoktapay = new WC_Gateway_UddoktaPay();
+			$fee = $uddoktapay->get_option('fee');
+			$amount = round(WC()->cart->cart_contents_total * ($fee / 100));
+			WC()->cart->add_fee('Fee', $amount);
+		}
+	}
+
+	function uddoktapay_refresh_checkout_on_payment_methods_change()
+	{
+		wc_enqueue_js("
+           $( 'form.checkout' ).on( 'change', 'input[name^=\'payment_method\']', function() {
+               $('body').trigger('update_checkout');
+            });
+       ");
 	}
 }

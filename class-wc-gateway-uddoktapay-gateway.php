@@ -90,7 +90,7 @@ class WC_Gateway_UddoktaPay extends WC_Payment_Gateway
 			$path = realpath($image_path . '/' . $m . '.png');
 			if ($path && dirname($path) === $image_path && is_file($path)) {
 				$url        = WC_HTTPS::force_https_url(plugins_url('/assets/images/' . $m . '.png', __FILE__));
-				$icon_html .= '<img width="30" height="30" src="' . esc_attr($url) . '" alt="' . esc_attr__($m, 'uddoktapay') . '" />';
+				$icon_html .= '<img width="30px" height="30px" src="' . esc_attr($url) . '" alt="' . esc_attr__($m, 'uddoktapay') . '" />';
 			}
 		}
 
@@ -104,7 +104,7 @@ class WC_Gateway_UddoktaPay extends WC_Payment_Gateway
 	{
 		$this->form_fields = array(
 			'enabled'        => array(
-				'title'   => __('Enable/Disable', 'woocommerce'),
+				'title'   => __('Enable/Disable', 'uddoktapay-gateway'),
 				'type'    => 'checkbox',
 				'label'   => __('Enable UddoktaPay Gateway Payment', 'uddoktapay-gateway'),
 				'default' => 'yes',
@@ -120,7 +120,7 @@ class WC_Gateway_UddoktaPay extends WC_Payment_Gateway
 				'title'       => __('Description', 'uddoktapay-gateway'),
 				'type'        => 'text',
 				'desc_tip'    => true,
-				'description' => __('This controls the description which the user sees during checkout.', 'woocommerce'),
+				'description' => __('This controls the description which the user sees during checkout.', 'uddoktapay-gateway'),
 				'default'     => __('Pay with uddoktapay gateway.', 'uddoktapay-gateway'),
 			),
 			'api_key'        => array(
@@ -146,6 +146,13 @@ class WC_Gateway_UddoktaPay extends WC_Payment_Gateway
 						'uddoktapay-gateway'
 					)
 				),
+			),
+			'fee'    => array(
+				'title'       => __('Fee (%)', 'uddoktapay-gateway'),
+				'type'        => 'text',
+				'desc_tip'    => true,
+				'description' => __('This fee will be added to the total amount of the cart', 'uddoktapay-gateway'),
+				'default'     => 0,
 			),
 			'show_icons'     => array(
 				'title'       => __('Show icons', 'uddoktapay-gateway'),
@@ -320,10 +327,6 @@ class WC_Gateway_UddoktaPay extends WC_Payment_Gateway
 					$order->update_status('processing', __('UddoktaPay Gateway payment was successfully processed.', 'uddoktapay-gateway'));
 					$order->payment_complete();
 				}
-				return true;
-			} elseif ($data->status === 'INVALID') {
-
-				$order->update_status('on-hold', __('UddoktaPay Gateway payment was successfully on-hold due to lower amount.', 'uddoktapay-gateway'));
 				return true;
 			} else {
 				$order->update_status('on-hold', __('UddoktaPay Gateway payment was successfully on-hold. Transaction id not found. Please check it manually.', 'uddoktapay-gateway'));

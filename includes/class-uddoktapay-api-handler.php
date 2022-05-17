@@ -6,6 +6,7 @@ defined('ABSPATH') or die('Direct access is not allowed.');
 /**
  * Sends API requests to UddoktaPay Gateway.
  */
+
 class UddoktaPay_Gateway_API_Handler
 {
 
@@ -93,17 +94,11 @@ class UddoktaPay_Gateway_API_Handler
 			return array(false, 'Wrong Currency.');
 		}
 
-		if (!is_null($amount)) {
-			$args['amount'] = $amount;
-		}
+		$args['amount'] = isset($amount) ? $amount : '0';
 
-		if (!is_null($full_name)) {
-			$args['full_name'] = $full_name;
-		}
+		$args['full_name'] = isset($full_name) ? $full_name : 'Unknown';
 
-		if (!is_null($email)) {
-			$args['email'] = $email;
-		}
+		$args['email'] = isset($email) ? $email : 'unknown@gmail.com';
 
 		if (!is_null($metadata)) {
 			$args['metadata'] = $metadata;

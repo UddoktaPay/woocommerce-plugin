@@ -1,2 +1,2 @@
-# woocommerce-plugin
-UddoktaPay Woocommerce Plugin
+# UddoktaPay Woocommerce Plugin
+UddoktaPay Woocomerce Plugin
