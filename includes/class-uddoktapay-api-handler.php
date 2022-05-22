@@ -94,11 +94,11 @@ class UddoktaPay_Gateway_API_Handler
 			return array(false, 'Wrong Currency.');
 		}
 
-		$args['amount'] = isset($amount) ? $amount : '0';
+		$args['amount'] = !empty($amount) ? $amount : '0';
 
-		$args['full_name'] = isset($full_name) ? $full_name : 'Unknown';
+		$args['full_name'] = !empty($full_name) ? $full_name : 'Unknown';
 
-		$args['email'] = isset($email) ? $email : 'unknown@gmail.com';
+		$args['email'] = !empty($email) ? $email : 'unknown@gmail.com';
 
 		if (!is_null($metadata)) {
 			$args['metadata'] = $metadata;
