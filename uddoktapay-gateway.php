@@ -1,14 +1,14 @@
 <?php
 /*
-Plugin Name:  UddoktaPay Gateway
-Plugin URI:   https://uddoktapay.com
-Description:  A payment gateway that allows your customers to pay with Bkash, Rocket, Nagad, Upay via UddoktaPay Gateway
-Version:      1.1.3
-Author:       Md Rasel Islam
-Author URI:   https://rtrasel.com
-License:      GPL 2 or later
-License URI:  https://www.gnu.org/licenses/gpl-2.0.html
-Text Domain:  uddoktapay-gateway
+Plugin Name: UddoktaPay Gateway
+Plugin URI: https://uddoktapay.com
+Description: This plugin allows your customers to pay with Bkash, Rocket, Nagad, Upay via UddoktaPay
+Version: 1.0.0
+Author: Md Rasel Islam
+Author URI: https://rtrasel.com
+License: GPL v2 or later
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
+Text Domain: uddoktapay-gateway
 */
 
 // If this file is called firectly, abort!!!

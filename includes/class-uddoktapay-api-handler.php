@@ -89,12 +89,12 @@ class UddoktaPay_Gateway_API_Handler
 			return array(false, 'Missing currency.');
 		}
 
+		$args['amount'] = !empty($amount) ? $amount : '0';
+
 		if ($currency !== "BDT") {
-			self::log('Error: if amount is given, currency must be BDT', 'error');
-			return array(false, 'Wrong Currency.');
+			$args['amount'] = $amount * 90;
 		}
 
-		$args['amount'] = !empty($amount) ? $amount : '0';
 
 		$args['full_name'] = !empty($full_name) ? $full_name : 'Unknown';
 

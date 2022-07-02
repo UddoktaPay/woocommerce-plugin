@@ -254,7 +254,7 @@ class WC_Gateway_UddoktaPay extends WC_Payment_Gateway
 	 */
 	public function handle_webhook()
 	{
-		$payload = file_get_contents('php://input');
+		$payload =  file_get_contents('php://input');
 		if (!empty($payload) && $this->validate_webhook($payload)) {
 			$data       = json_decode($payload);
 
@@ -286,9 +286,9 @@ class WC_Gateway_UddoktaPay extends WC_Payment_Gateway
 			return false;
 		}
 
-		$api = trim($_SERVER[$key]);
+		$api = sanitize_text_field($_SERVER[$key]);
 
-		$api_key = trim($this->get_option('api_key'));
+		$api_key = sanitize_text_field($this->get_option('api_key'));
 
 		if ($api_key === $api) {
 			return true;
@@ -305,8 +305,8 @@ class WC_Gateway_UddoktaPay extends WC_Payment_Gateway
 		include_once dirname(__FILE__) . '/includes/class-uddoktapay-api-handler.php';
 
 		UddoktaPay_Gateway_API_Handler::$log     = get_class($this) . '::log';
-		UddoktaPay_Gateway_API_Handler::$api_url = trim($this->get_option('api_url'));
-		UddoktaPay_Gateway_API_Handler::$api_key = trim($this->get_option('api_key'));
+		UddoktaPay_Gateway_API_Handler::$api_url = sanitize_text_field($this->get_option('api_url'));
+		UddoktaPay_Gateway_API_Handler::$api_key = sanitize_text_field($this->get_option('api_key'));
 	}
 
 	/**
@@ -348,19 +348,16 @@ class WC_Gateway_UddoktaPay extends WC_Payment_Gateway
 		}
 
 		// payment data
-		$data = (get_post_meta($_GET['post'], 'uddoktapay_payment_data', true)) ? get_post_meta($_GET['post'], 'uddoktapay_payment_data', true) : '';
+		$data = (get_post_meta(sanitize_text_field($_GET['post']), 'uddoktapay_payment_data', true)) ? get_post_meta(sanitize_text_field($_GET['post']), 'uddoktapay_payment_data', true) : '';
 
 		$image_path = plugin_dir_path(__FILE__) . 'assets/images';
-		$icon_html  = '';
-		$logo    = trim(strtolower($data->payment_method));
+		$logo    = sanitize_text_field(strtolower($data->payment_method));
 
 		// Load icon for each available payment method.
 		$path = realpath($image_path . '/' . $logo . '.png');
 		if ($path && dirname($path) === $image_path && is_file($path)) {
 			$img_url        = WC_HTTPS::force_https_url(plugins_url('/assets/images/' . $logo . '.png', __FILE__));
-			//$icon_html = '<img width="30" src="' . esc_attr( $url ) . '" alt="' . esc_attr__( $m, 'uddoktapay' ) . '" />';
 		}
-
 ?>
 		<div class="form-field form-field-wide bdpg-admin-data">
 			<img src="<?php echo esc_url($img_url); ?> " alt="<?php echo esc_attr($data->payment_method); ?>">
